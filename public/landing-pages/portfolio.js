@@ -1,5 +1,78 @@
 "use strict";
 
+const ambientAudio = document.getElementById("ambient-audio");
+const soundToggle = document.getElementById("sound-toggle");
+const soundLabel = document.getElementById("sound-label");
+const soundStatus = document.getElementById("sound-status");
+const soundPreferenceKey = "afnan-portfolio-sound";
+ambientAudio.volume = 0.18;
+let soundEnabled = true;
+let soundInteraction = false;
+try {
+  soundEnabled = localStorage.getItem(soundPreferenceKey) !== "off";
+} catch {
+  // Playback still works when browser storage is unavailable.
+}
+
+function updateSoundControl() {
+  const playing = !ambientAudio.paused && !ambientAudio.ended;
+  soundToggle.classList.toggle("is-playing", playing);
+  soundToggle.setAttribute("aria-pressed", String(playing));
+  soundToggle.setAttribute("aria-label", playing ? "Turn background music off" : "Turn background music on");
+  soundLabel.textContent = playing ? "Sound on" : "Sound off";
+}
+
+async function startAmbientAudio() {
+  if (!soundEnabled || document.hidden) return;
+  ambientAudio.volume = 0.18;
+  soundStatus.textContent = "";
+  try {
+    await ambientAudio.play();
+    // A mute or tab switch can arrive before the play promise resolves.
+    if (!soundEnabled || document.hidden) ambientAudio.pause();
+  } catch {
+    soundStatus.textContent = "Music could not start. Use the sound button to try again.";
+  }
+  updateSoundControl();
+}
+
+function firstSoundInteraction(event) {
+  if (soundInteraction || !soundEnabled || !event.isTrusted) return;
+  if (soundToggle.contains(event.target)) return;
+  if (event.type === "keydown" && (event.key === "Escape" || event.ctrlKey || event.metaKey || event.altKey)) return;
+  soundInteraction = true;
+  void startAmbientAudio();
+}
+
+window.addEventListener("pointerdown", firstSoundInteraction, { passive: true });
+window.addEventListener("keydown", firstSoundInteraction);
+soundToggle.addEventListener("click", () => {
+  soundInteraction = true;
+  soundEnabled = ambientAudio.paused;
+  try {
+    localStorage.setItem(soundPreferenceKey, soundEnabled ? "on" : "off");
+  } catch {
+    // The control remains usable without a saved preference.
+  }
+  if (soundEnabled) void startAmbientAudio();
+  else ambientAudio.pause();
+  updateSoundControl();
+});
+ambientAudio.addEventListener("play", updateSoundControl);
+ambientAudio.addEventListener("pause", updateSoundControl);
+ambientAudio.addEventListener("error", () => {
+  soundStatus.textContent = "The soundtrack is unavailable. You can continue browsing without music.";
+  updateSoundControl();
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) ambientAudio.pause();
+  else if (soundEnabled && soundInteraction) void startAmbientAudio();
+});
+new IntersectionObserver(([entry]) => {
+  soundToggle.classList.toggle("is-intro", entry.isIntersecting);
+}).observe(document.getElementById("hero"));
+updateSoundControl();
+
 const projectNotes = {
   offline: {
     title: "Offline UPI",

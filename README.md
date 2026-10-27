@@ -10,11 +10,11 @@ A personal portfolio built around the original Kage Three.js temple. The Next.js
 
 ## Editing content
 
-- `public/landing-pages/afnan.html`: portfolio copy, four projects, scene renderer, navigation, and section structure.
+- `public/landing-pages/afnan.html`: portfolio copy, four projects, experience, achievements, scene renderer, navigation, and section structure.
 - `public/landing-pages/portfolio.css`: portfolio layout, responsive rules, palette, and focus states.
 - `public/landing-pages/portfolio.js`: project-detail dialogs, email copy action, mobile menu keyboard support, and context-loss fallback.
 - `public/portfolio/`: supplied project screenshots and technology icons, copied from `app/assets`.
-- `public/portfolio/tech/*.svg`: local Devicon logos for the nine-tool showcase, including Python; its license is included alongside the assets.
+- `public/portfolio/tech/*.svg`: local Devicon logos for the twelve-tool showcase, including Python, PostgreSQL, MongoDB, and n8n; its license is included alongside the assets.
 - `app/layout.tsx`: title, description, and social metadata.
 
 Project descriptions, repository URLs, name, and contact email were drawn from the user's earlier local portfolio in the neighbouring `Afnan` project. The experience timeline uses the three roles, dates, responsibilities, and performance figures from that project's `src/components/Experience.jsx`. Its VESITRail illustration comes from `public/vesit/image.png`. No employment details or metrics have been invented. Project buttons show native dialogs; external repository links open in a new tab. Contact opens the user's email client, and a separate action copies the email address.
@@ -28,3 +28,9 @@ The scene pauses ambient time progression for reduced-motion preferences, uses t
 The original Kage document retains its hosted image URLs. Those fourteen images are also stored in `secret-pathways-assets/`. The portfolio's visible project images use local URLs.
 
 See `DESIGN.md` for the approved visual direction and content provenance.
+
+The former Practice overview is now an Achievements gallery featuring the user's ISTE VESIT leadership, hackathon results, mentoring, and speaking records. The original scenic temple assets illustrate the section; the twelve-tool grid remains below it. Genesis is shown as 2nd Runner-up, omitting the contradictory first-place wording in the supplied list.
+
+## Soundtrack
+
+The local track at `public/sound/lokenwarrior-whispers-in-the-rain-431021.mp3` loops at 18% volume after the first click, touch, or keyboard interaction. A fixed Sound on/off control is available throughout the page. Its preference is saved locally when storage is available; disabling sound prevents automatic playback on later visits. Music pauses in background tabs and resumes when returning only if enabled.
