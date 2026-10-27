@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Afnan Kazi portfolio
 
-## Getting Started
+A personal portfolio built around the original Kage Three.js temple. The Next.js homepage lazy-loads a full-height document host; its contents scroll natively without a visible scrollbar.
 
-First, run the development server:
+## Development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- `npm run dev`: development server.
+- `npm run build`: production build and TypeScript validation.
+- `npm run lint`: application linting.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `public/landing-pages/afnan.html`: portfolio copy, four projects, scene renderer, navigation, and section structure.
+- `public/landing-pages/portfolio.css`: portfolio layout, responsive rules, palette, and focus states.
+- `public/landing-pages/portfolio.js`: project-detail dialogs, email copy action, mobile menu keyboard support, and context-loss fallback.
+- `public/portfolio/`: supplied project screenshots and technology icons, copied from `app/assets`.
+- `public/portfolio/tech/*.svg`: local Devicon logos for the nine-tool showcase, including Python; its license is included alongside the assets.
+- `app/layout.tsx`: title, description, and social metadata.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Project descriptions, repository URLs, name, and contact email were drawn from the user's earlier local portfolio in the neighbouring `Afnan` project. The experience timeline uses the three roles, dates, responsibilities, and performance figures from that project's `src/components/Experience.jsx`. Its VESITRail illustration comes from `public/vesit/image.png`. No employment details or metrics have been invented. Project buttons show native dialogs; external repository links open in a new tab. Contact opens the user's email client, and a separate action copies the email address.
 
-## Learn More
+## Scene
 
-To learn more about Next.js, take a look at the following resources:
+`public/landing-pages/kage.html` remains the original reference document with the requested hidden scrollbar. `afnan.html` adapts its scene to the portfolio, including an AFNAN wordmark and less grain. Scene materials and camera construction remain from the supplied source. The adapted portfolio uses local fonts, images, and Three.js r146. Onest Semibold supplies the wordmark because the original font bundle was unavailable.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The scene pauses ambient time progression for reduced-motion preferences, uses the original adaptive resolution governor, and shows readable static content if WebGL is unavailable or its context is lost. Native dialogs trap focus, close with Escape, and return focus to their opening button.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The original Kage document retains its hosted image URLs. Those fourteen images are also stored in `secret-pathways-assets/`. The portfolio's visible project images use local URLs.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `DESIGN.md` for the approved visual direction and content provenance.
