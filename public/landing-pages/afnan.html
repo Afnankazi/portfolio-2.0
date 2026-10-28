@@ -99,18 +99,20 @@ h1,h2,h3{ font-weight:400; margin:0; letter-spacing:-.005em; }
 #pre{
   position:fixed; inset:0; z-index:100; background:#05070a;
   display:flex; align-items:center; justify-content:center;
-  transition:opacity .8s var(--ease), visibility .8s;
+  padding:32px 24px;
+  transition:opacity .55s var(--ease), visibility .55s;
 }
 #pre.done{ opacity:0; visibility:hidden; pointer-events:none; }
-.pre-in{ width:min(420px,74vw); text-align:center; }
-.pre-mark{ margin:0 auto 26px; width:44px; height:44px; opacity:.9; }
+.pre-in{ width:min(100%,360px); text-align:center; }
+.pre-mark{ margin:0 auto 24px; width:64px; height:64px; }
 .pre-mark svg{ width:100%; height:100%; display:block; }
-.pre-jp{ font-size:12px; letter-spacing:.5em; color:var(--bone-dim); margin-bottom:20px; }
-.pre-bar{ position:relative; height:1px; background:rgba(223,231,224,.14); overflow:hidden; }
-.pre-bar i{ position:absolute; inset:0 100% 0 0; background:var(--bone); transition:right .35s linear; }
-.pre-meta{ display:flex; justify-content:space-between; margin-top:12px;
-  font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
-.pre-meta b{ font-weight:500; color:var(--bone-dim); font-variant-numeric:tabular-nums; }
+.pre-jp{ font-size:16px; letter-spacing:.3em; padding-left:.3em; color:var(--bone-dim); margin-bottom:28px; }
+.pre-bar{ position:relative; height:2px; background:#555f59; overflow:hidden; }
+.pre-bar i{ position:absolute; inset:0; background:var(--bone); transform:scaleX(0); transform-origin:left; }
+.pre-meta{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-top:14px;
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--bone-dim); text-align:left; }
+.pre-meta b{ flex-shrink:0; font-weight:500; color:var(--bone); font-variant-numeric:tabular-nums; letter-spacing:.04em; }
+@media(prefers-reduced-motion:reduce){ #pre{ transition:none; } }
 
 /* ============================================================= nav */
 .nav{
@@ -897,10 +899,10 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
 <audio id="ambient-audio" src="/sound/lokenwarrior-whispers-in-the-rain-431021.mp3" loop preload="none"></audio>
 <button class="sound-toggle is-intro" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn background music on" title="Background music at 18% volume"><span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span id="sound-label">Sound off</span></button>
 <span class="sound-status" id="sound-status" role="status"></span>
-<div id="pre" role="status" aria-label="Loading portfolio"><div class="pre-in">
+<div id="pre" aria-label="Loading portfolio"><div class="pre-in">
   <div class="pre-mark"><svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="24" r="9.5" stroke="#e0231c" stroke-width="1.2"/><path d="M6 12h32M9.5 17h25M22 8v28" stroke="#dfe7e0" stroke-width="1.2"/></svg></div>
-  <div class="pre-jp jp" lang="ja">創る</div><div class="pre-bar"><i id="pre-fill"></i></div>
-  <div class="pre-meta"><span>Entering Afnan's world</span><b><span id="pre-pct">0</span>%</b></div>
+  <div class="pre-jp jp" lang="ja">創る</div><div class="pre-bar" id="pre-progress" role="progressbar" aria-label="Loading portfolio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="pre-fill"></i></div>
+  <div class="pre-meta"><span>Entering Afnan's world</span><b aria-hidden="true"><span id="pre-pct">0</span>%</b></div>
 </div></div>
 <header class="nav" id="nav">
   <a class="brand" href="#top" data-cursor aria-label="Afnan Kazi, back to top">
@@ -3995,6 +3997,11 @@ function layoutWord() {
 const $  = s => document.querySelector(s);
 const $$ = s => [].slice.call(document.querySelectorAll(s));
 const nav = $('#nav'), preEl = $('#pre'), preFill = $('#pre-fill'), prePct = $('#pre-pct');
+function setLoadProgress(percent) {
+  preFill.style.transform = 'scaleX(' + percent / 100 + ')';
+  prePct.textContent = percent;
+  $('#pre-progress').setAttribute('aria-valuenow', percent);
+}
 
 function wireReveals() {
   splitHeadingWords();
@@ -4611,10 +4618,11 @@ function boot() {
     const j = JOBS[i];
     const done = () => {
       i++;
-      const p = i / JOBS.length;
-      preFill.style.right = ((1 - p) * 100).toFixed(1) + '%';
-      prePct.textContent = Math.round(p * 100);
-      if (i < JOBS.length) setTimeout(step, 16); else setTimeout(start, 220);
+      setLoadProgress(Math.round(i / (JOBS.length + 1) * 100));
+      if (i < JOBS.length) setTimeout(step, 16);
+      else {
+        setTimeout(() => { try { start(); } catch (err) { fallback(err); } }, 16);
+      }
     };
     let r;
     try { r = j[1](); }
@@ -4659,17 +4667,21 @@ function start() {
     $$('[data-rv], .mask-line').forEach(e => e.classList.add('rv-in'));
     document.body.classList.remove('is-locked');
     preEl.classList.add('done');
-  } else {
-    preEl.classList.add('done');
-    setTimeout(() => {
-      document.body.classList.remove('is-locked');
-      $('#hero').querySelectorAll('[data-rv], .mask-line').forEach((e, i) =>
-        setTimeout(() => e.classList.add('rv-in'), REDUCE ? 0 : 120 + i * 95));
-    }, REDUCE ? 0 : 340);
   }
   running = true; tPrev = performance.now();
   INTRO.t0 = shot !== null ? 0 : (REDUCE ? performance.now() - 4000 : performance.now());
-  queue();
+  requestAnimationFrame(now => {
+    try {
+      frame(now);
+      setLoadProgress(100);
+      if (shot === null) setTimeout(() => {
+        preEl.classList.add('done');
+        document.body.classList.remove('is-locked');
+        $('#hero').querySelectorAll('[data-rv], .mask-line').forEach((e, i) =>
+          setTimeout(() => e.classList.add('rv-in'), REDUCE ? 0 : 120 + i * 95));
+      }, REDUCE ? 0 : 180);
+    } catch (err) { running = false; fallback(err); }
+  });
   window.__kage = window.__secret = { RIG: RIG, WORLD: WORLD, WORD: WORD, CAM: CAM, POST: POST, renderer: renderer, scene: scene, camera: camera, anchors: () => anchors };
 }
 

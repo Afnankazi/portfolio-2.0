@@ -8,6 +8,14 @@ A personal portfolio built around the original Kage Three.js temple. The Next.js
 - `npm run build`: production build and TypeScript validation.
 - `npm run lint`: application linting.
 
+## Search and sharing
+
+The production URL defaults to `https://afnankazi.vercel.app`. Set `NEXT_PUBLIC_SITE_URL` to an absolute HTTPS origin before building if the domain changes. The canonical URL, Open Graph metadata, structured data, `/robots.txt`, and `/sitemap.xml` share the configuration in `app/site.ts`.
+
+The sitemap lists the homepage because the portfolio sections are anchors on one page. The embedded portfolio document sends an HTTP canonical link to the homepage; the original Kage reference sends `X-Robots-Tag: noindex, follow`. Crawlers can still fetch scripts, styles, and images. Open Graph and Twitter cards use the existing local temple preview image.
+
+The homepage currently hosts the visual portfolio in an iframe. Metadata and structured data are server-rendered, but moving the portfolio's semantic content into the main document would improve direct content discovery further.
+
 ## Editing content
 
 - `public/landing-pages/afnan.html`: portfolio copy, four projects, experience, achievements, scene renderer, navigation, and section structure.
