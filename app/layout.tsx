@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from '@vercel/analytics/next';
 import { site, siteUrl } from "./site";
 import "./globals.css";
 
@@ -77,5 +78,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return <html lang="en"><body>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
     {children}
+    <Analytics />
   </body></html>;
 }
